@@ -1,0 +1,30 @@
+<div class="ngdialog-message">
+    <div class="msg">
+        <form name="msgForm" role="form">
+            <div class="modal-title">
+                Send Message
+            </div>
+            <div>
+                <div id="alerts-container"></div>
+                <div class="form-group">
+                    <input type="email" name="email" ng-model="msg.email" class="form-control input-lg" placeholder="Email" tabindex="1" autofocus required>
+                </div>
+                <div class="form-group">
+                    <textarea name="content" id="content" ng-model="msg.content" class="form-control" rows="3" placeholder="Content" tabindex="2" required></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-block btn-info btn-lg" ng-click="sendMsg();" tabindex="3"
+                            ng-disabled="msgForm.email.$error.email || msgForm.email.$error.required || msgForm.content.$error.required">
+                        Send
+                    </button>
+                </div>
+            </div>
+            <div>
+                이메일을 함께 해서 메세지를 보내주시면 제가 보고 답변드리겠습니다.<br>
+                메세지는 저한테 오며, 이메일과 Telegram으로 메세지가 전송됩니다.
+            </div>
+        </form>
+    </div>
+</div>

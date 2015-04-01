@@ -1,0 +1,28 @@
+<div class="ngdialog-message">
+    <div class="login-box">
+        <form name="login" role="form">
+            <div class="modal-title">
+                Admin Login
+            </div>
+            <div>
+                <div id="alerts-container"></div>
+                <div class="form-group"
+                     ng-class="{ 'has-error' : login.userId.$invalid && !login.userId.$pristine ,'has-success': !login.userId.$error.required }">
+                    <input type="text" name="userId" ng-model="login.id" class="form-control input-lg" placeholder="ID" tabindex="1" required autofocus>
+                </div>
+                <div class="form-group"
+                     ng-class="{ 'has-error' : login.password.$invalid && !login.password.$pristine ,'has-success': !login.password.$error.required }">
+                    <input type="password" name="password" ng-model="login.pw" class="form-control input-lg" placeholder="Password" tabindex="2" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-block btn-warning btn-lg" ng-click="doLogin();" tabindex="3"
+                            ng-disabled="login.password.$error.required || login.id.$error.required">
+                        Login
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

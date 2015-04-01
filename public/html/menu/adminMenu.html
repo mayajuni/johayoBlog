@@ -1,0 +1,31 @@
+<div class="col-xs-12 admin-menu">
+    <div class="panel panel-info" >
+        <div class="panel-heading">
+            <span class="header-division">Setting Menu</span>
+        </div>
+        <div class="panel-collapse">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="select">What is 1step?</label>
+                    <select id="select" ng-model="menu.select" ng-options="list.name for list in menuList" class="form-control">
+                        <option value="">--new one--</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="name"> Name</label>
+                    <input type="text" ng-model="menu.name" class="form-control" id="name" placeholder="Name">
+                </div>
+                <div class="form-group">
+                    <label for="rank"> Rank</label>
+                    <input type="text" ng-model="menu.rank" class="form-control" id="rank" placeholder="Rank">
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" ng-model="menu.isBoard"> is board?
+                    </label>
+                </div>
+                <button class="btn btn-default" ng-click="addMenu()">Add</button>
+            </div>
+        </div>
+    </div>
+</div>

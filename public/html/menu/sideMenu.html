@@ -1,0 +1,24 @@
+<div class="sidebar" ng-class="{'hide-left-bar' : hideMenu == 'true'}">
+    <nav class="sidebar-box">
+        <ul class="sidebar-menu">
+            <li ng-repeat="list in menuList | orderBy : list.rank : false" ng-class="getClass(list.subMenuList.length)">
+                <span ng-if="list.subMenuList.length < 1">
+                    <a ng-href="{{list.url}}" ng-class="isActive(list.name)">
+                        <span>{{list.name | firstCharUpper}}</span>
+                    </a>
+                </span>
+                <span ng-if="list.subMenuList.length > 0">
+                    <a class="haveSub" >
+                        <span>{{list.name | firstCharUpper}}</span>
+                        <i class="fa icon-right fa-angle-down"></i>
+                    </a>
+                    <ul class="sub">
+                        <li ng-repeat="subList in list.subMenuList | orderBy : subList.rank : false">
+                            <a ng-href="{{subList.url}}" class="sub-menu-name" ng-class="isSubActive(subList.name)">└ {{subList.name | firstCharUpper}}</a>
+                        </li>
+                    </ul>
+                </span>
+            </li>
+        </ul>
+    </nav>
+</div>
