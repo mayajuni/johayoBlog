@@ -26,6 +26,19 @@ angular.module('johayo.controller')
                 {text: '<i class="glyphicon glyphicon-remove"></i> Delete', click: 'deleteBoard()'},
             ];
 
+            $scope.boardFils = new Array();
+
+            if(boardDetail.fileList.length > 0){
+                for(var i=0;i<boardDetail.fileList.length;i++){
+                    var classNm = boardDetail.fileList[i].isImg ? '<i class="fa fa-file-image-o"></i> ' : '<i class="fa fa-file-text-o"></i> ';
+                    $scope.boardFils.push({
+                        text: classNm + boardDetail.fileList[i].name,
+                        href: '/download?path='+boardDetail.fileList[i].path +'&name='+boardDetail.fileList[i].name,
+                        target: "_self"
+                    });
+                }
+            }
+
             $scope.deleteBoard = function(){
                 boardService.delete(boardDetail._id).then(function(){
                     $location.path('/board/'+$routeParams.division);

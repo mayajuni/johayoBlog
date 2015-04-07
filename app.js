@@ -57,6 +57,12 @@ app.use(session({
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join('/johayo/upload')));
 
+app.get('/download', function(req, res){
+    var path = validator.isNull(req.param('path'))  ? error.throw(409,'Please check path.') : req.param('path');
+    var name = validator.isNull(req.param('name')) ? '' : req.param('name');
+    res.download(path,name);
+});
+
 /* 로그인이 필요한 서비스 */
 app.use('/api/file', loginUtil.check);
 app.use('/api/bookmark', loginUtil.check);

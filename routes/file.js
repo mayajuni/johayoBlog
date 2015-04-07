@@ -62,13 +62,4 @@ router.delete('/', function(req, res){
     res.send('');
 });
 
-/**
- * 파일 다운로드
- */
-router.get('/download', function(req,res){
-    var path = validator.isNull(req.param('path'))  ? error.throw(409,'Please check path.') : req.param('path');
-    var name = validator.isNull(req.param('name')) ? '' : req.param('name');
-    res.download(path,name);
-});
-
 module.exports = router;

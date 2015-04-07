@@ -510,6 +510,7 @@ p {
     font-size: 25px;
     padding-top: 12px;
     cursor: inherit;
+    padding-left: 8px;
 }
 
 .file {
@@ -628,7 +629,7 @@ p {
 .board-detail .content {
     border-top: 3px double #dcdcdc;
     border-bottom: 3px double #dcdcdc;
-    padding: 15px 0;
+    padding: 0;
     word-wrap: break-word;
 }
 
@@ -639,6 +640,12 @@ p {
 
 .board-detail .detail-reg-date {
     color: #9d9d9d
+}
+
+.board-file {
+    float: right;
+    width: 60px;
+    font-size: 20px;
 }
 /* board end */
 
@@ -1166,4 +1173,8 @@ p {
 .ngdialog.ngdialog-theme-error {
     /*padding-bottom: 160px;*/
     padding-top: 50px;
+}
+
+.pointer {
+    cursor: pointer;
 }

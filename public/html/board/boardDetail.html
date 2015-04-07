@@ -11,7 +11,14 @@
                 {{boardDetail.title}}
             </div>
         </div>
-        <div class="content" ng-model="boardDetail.content" ta-bind="text"></div>
+        <div class="content">
+            <div style="height: 20px;"  ng-if="boardDetail.fileList.length > 0">
+                <span class="board-file pointer" bs-dropdown="boardFils" placement="bottom-right" html="true">
+                    <i class="fa fa-folder"></i> File
+                </span>
+            </div>
+            <div ng-model="boardDetail.content" ta-bind="text"></div>
+        </div>
 
         <!-- 댓글 -->
         <div class="comment-box" ng-controller="commentController">

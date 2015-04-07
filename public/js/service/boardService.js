@@ -25,6 +25,13 @@ angular.module("johayo.service")
                     });
                     return asy.promise;
                 },
+                getFiles : function(seq){
+                    var asy = $q.defer();
+                    boardApi.admin.delete({seq: seq}, function(){
+                        asy.resolve();
+                    });
+                    return asy.promise;
+                },
                 save : function(params){
                     var asy = $q.defer();
                     boardApi.admin.save(params, function(){
