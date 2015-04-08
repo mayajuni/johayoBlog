@@ -26,7 +26,7 @@ router.post('/url', function(req, res){
         type : "image/jpeg"
     };
 
-    webshot(url, urlFile.path, {shotSize: {width: 'all', height: 480}}, function(err) {
+    webshot(url, urlFile.path, {shotSize: {width: 'all', height: 200}}, function(err) {
         if(err){
             throw err;
         }
