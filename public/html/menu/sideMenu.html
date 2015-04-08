@@ -13,7 +13,7 @@
                         <i class="fa icon-right fa-angle-down"></i>
                     </a>
                     <ul class="sub">
-                        <li ng-repeat="subList in list.subMenuList | orderBy : subList.rank : false">
+                        <li ng-repeat="subList in list.subMenuList | orderBy:'rank':false">
                             <a ng-href="{{subList.url}}" class="sub-menu-name" ng-class="isSubActive(subList.name)">└ {{subList.name | firstCharUpper}}</a>
                         </li>
                     </ul>
