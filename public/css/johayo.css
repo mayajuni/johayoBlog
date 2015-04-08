@@ -630,8 +630,8 @@ p {
 .board-detail .content {
     border-top: 3px double #dcdcdc;
     border-bottom: 3px double #dcdcdc;
-    padding: 0;
     word-wrap: break-word;
+    padding: 0 0 10px;
 }
 
 .board-detail .reg-date {
