@@ -10,7 +10,7 @@
                     <select id="select" ng-model="board.division" class="form-control">
                         <option value="">--choose--</option>
                         <optgroup ng-repeat="list in menuList" ng-if="list.isBoard" label="{{list.name}}">
-                            <option ng-repeat="subList in list.subMenuList" value="{{subList.name}}">{{subList.name}}</option>
+                            <option ng-repeat="subList in list.subMenuList | orderBy : 'rank' : false" value="{{subList.name}}">{{subList.name}}</option>
                         </optgroup>
                     </select>
                 </div>
@@ -24,7 +24,7 @@
                         <ul class="file">
                             <li ng-repeat="list in selectedFiles" ng-if="!list.deleteYn">
                                 <div class="pull-right" ng-click="deleteFile($index, uploadFileList[$index].path)" ng-if="list.progress == 100">
-                                    <i class="glyphicon glyphicon-remove"></i>
+                                    <i style="left: 3px;" class="glyphicon glyphicon-remove"></i>
                                 </div>
                                 <div class="file-icon" ng-if="uploadFileList[$index].url == null || !list.isImg">
                                     <i class="fa fa-file-text-o"></i>

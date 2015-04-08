@@ -524,6 +524,7 @@ p {
     width: 60px;
     word-wrap: break-word;
     float: left;
+    margin-top: 10px;
 }
 
 .file-list {
