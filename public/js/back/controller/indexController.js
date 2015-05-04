@@ -66,4 +66,6 @@ angular.module('johayo.controller')
             };
 
             $scope.getLoginInfo();
+
+            $("#jpreOverlay").hide();
         }]);
