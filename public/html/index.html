@@ -75,6 +75,12 @@
         </article>
     </section>
     <footer></footer>
+    <div id="jSplash">
+        <div class="selected">
+            <h2>Johayo Blog</h2>
+            <strong>로딩중에 있습니다. 잠시만 기다려주세요.</strong>
+        </div>
+    </div>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -84,16 +90,11 @@
         ga('create', 'UA-57469105-1', 'auto');
         ga('send', 'pageview');
 
-
         // Preload the page with jPreLoader
         $('body').jpreLoader({
             splashID: "#jSplash",
-            showSplash: true,
-            showPercentage: true,
-            autoClose: true,
-            splashFunction: function() {
-                $('#circle').delay(250).animate({'opacity' : 1}, 500, 'linear');
-            }
+            loaderVPos: '45%',
+            autoClose: true
         });
     </script>
 
