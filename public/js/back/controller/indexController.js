@@ -67,5 +67,5 @@ angular.module('johayo.controller')
 
             $scope.getLoginInfo();
 
-            $("#jpreOverlay").css("dispay", "none");
+            $("#jpreOverlay").css({"dispay": "none"});
         }]);
