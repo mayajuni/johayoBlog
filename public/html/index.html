@@ -28,55 +28,7 @@
 
     <!-- lib -->
     <script src="/lib/js/jquery/jquery-1.11.1.min.js"></script>
-    <script src="/lib/js/angular/angular.min.js"></script>
-    <script src="/lib/js/angular/angular-route.min.js"></script>
-    <script src="/lib/js/angular/angular-resource.min.js"></script>
-    <script src="/lib/js/angular/angular-animate.min.js"></script>
-    <script src="/lib/js/angular/strap/angular-strap.min.js"></script>
-    <script src="/lib/js/angular/strap/angular-strap.tpl.min.js"></script>
-    <script src="/lib/js/angular/ngDialog/ngDialog.min.js"></script>
-    <script src="/lib/js/angular/textEditor/textAngular.min.js"></script>
-    <script src="/lib/js/angular/textEditor/textAngular-sanitize.min.js"></script>
-    <script src="/lib/js/angular/fileUpload/angular-file-upload-shim.js"></script>
-    <script src="/lib/js/angular/fileUpload/angular-file-upload.min.js"></script>
-    <script src="/lib/js/angular/johayo/johayo-clock.js"></script>
-    <script src="/lib/js/bootstrap/bootstrap.min.js"></script>
-
-    <!-- app -->
-    <script src="/js/app.js"></script>
-
-    <!-- controller -->
-    <script src="/js/controller/indexController.js"></script>
-    <script src="/js/controller/menuController.js"></script>
-    <script src="/js/controller/loginController.js"></script>
-    <script src="/js/controller/mainController.js"></script>
-    <script src="/js/controller/boardController.js"></script>
-    <script src="/js/controller/commentController.js"></script>
-    <script src="/js/controller/bookmarkController.js"></script>
-    <script src="/js/controller/msgController.js"></script>
-
-    <!-- service -->
-    <script src="/js/service/menuService.js"></script>
-    <script src="/js/service/errorService.js"></script>
-    <script src="/js/service/loginService.js"></script>
-    <script src="/js/service/boardService.js"></script>
-    <script src="/js/service/commentService.js"></script>
-    <script src="/js/service/fileService.js"></script>
-    <script src="/js/service/bookmarkService.js"></script>
-    <script src="/js/service/msgService.js"></script>
-
-    <!-- directive -->
-    <script src="/js/directive/menuDirective.js"></script>
-    <script src="/js/directive/commonDirective.js"></script>
-    <script src="/js/directive/bookmarkDirective.js"></script>
-
-    <!-- filter -->
-    <script src="/js/filter/commonFilter.js"></script>
-
-    <!-- config -->
-    <script src="/js/config/errorQueue.js"></script>
-    <script src="/js/config/interceptor.js"></script>
-    <script src="/js/config/loginRetryQueue.js"></script>
+    <script src="/lib/js/jquery/jpreloader.min.js"></script>
 </head>
 <body ng-controller="indexController">
     <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
@@ -131,6 +83,69 @@
 
         ga('create', 'UA-57469105-1', 'auto');
         ga('send', 'pageview');
+
+
+        // Preload the page with jPreLoader
+        $('body').jpreLoader({
+            splashID: "#jSplash",
+            showSplash: true,
+            showPercentage: true,
+            autoClose: true,
+            splashFunction: function() {
+                $('#circle').delay(250).animate({'opacity' : 1}, 500, 'linear');
+            }
+        });
     </script>
+
+
+    <script src="/lib/js/angular/angular.min.js"></script>
+    <script src="/lib/js/angular/angular-route.min.js"></script>
+    <script src="/lib/js/angular/angular-resource.min.js"></script>
+    <script src="/lib/js/angular/angular-animate.min.js"></script>
+    <script src="/lib/js/angular/strap/angular-strap.min.js"></script>
+    <script src="/lib/js/angular/strap/angular-strap.tpl.min.js"></script>
+    <script src="/lib/js/angular/ngDialog/ngDialog.min.js"></script>
+    <script src="/lib/js/angular/textEditor/textAngular.min.js"></script>
+    <script src="/lib/js/angular/textEditor/textAngular-sanitize.min.js"></script>
+    <script src="/lib/js/angular/fileUpload/angular-file-upload-shim.js"></script>
+    <script src="/lib/js/angular/fileUpload/angular-file-upload.min.js"></script>
+    <script src="/lib/js/angular/johayo/johayo-clock.js"></script>
+    <script src="/lib/js/bootstrap/bootstrap.min.js"></script>
+
+    <!-- app -->
+    <script src="/js/app.js"></script>
+
+    <!-- controller -->
+    <script src="/js/controller/indexController.js"></script>
+    <script src="/js/controller/menuController.js"></script>
+    <script src="/js/controller/loginController.js"></script>
+    <script src="/js/controller/mainController.js"></script>
+    <script src="/js/controller/boardController.js"></script>
+    <script src="/js/controller/commentController.js"></script>
+    <script src="/js/controller/bookmarkController.js"></script>
+    <script src="/js/controller/msgController.js"></script>
+
+    <!-- service -->
+    <script src="/js/service/menuService.js"></script>
+    <script src="/js/service/errorService.js"></script>
+    <script src="/js/service/loginService.js"></script>
+    <script src="/js/service/boardService.js"></script>
+    <script src="/js/service/commentService.js"></script>
+    <script src="/js/service/fileService.js"></script>
+    <script src="/js/service/bookmarkService.js"></script>
+    <script src="/js/service/msgService.js"></script>
+
+    <!-- directive -->
+    <script src="/js/directive/menuDirective.js"></script>
+    <script src="/js/directive/commonDirective.js"></script>
+    <script src="/js/directive/bookmarkDirective.js"></script>
+
+    <!-- filter -->
+    <script src="/js/filter/commonFilter.js"></script>
+
+    <!-- config -->
+    <script src="/js/config/errorQueue.js"></script>
+    <script src="/js/config/interceptor.js"></script>
+    <script src="/js/config/loginRetryQueue.js"></script>
 </body>
 </html>
