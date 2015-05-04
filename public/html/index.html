@@ -37,6 +37,52 @@
             <strong>로딩중에 있습니다. 잠시만 기다려주세요.</strong>
         </div>
     </div>
+    <div id="w" style="display: none;">
+        <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
+            <div class="logo">
+                <a href="/" class="logo">
+                    <img src="/imgs/logo.png" alt="Log">
+                </a>
+                <div class="sidebar-toggle-box" ng-click="hideMenu = !hideMenu">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div>
+            <div class="header-menu clearfix">
+                <ul class="nav pull-left top">
+                    <li>
+                        <div class="icon msg-box" ng-click="openMsg();">
+                            <i class="fa fa-envelope-o"></i>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="icon admin-box" ng-if="isLogin">
+                            <i class="fa fa-unlock"></i>
+                        </div>
+                        <div class="icon admin-box" ng-click="openLogin()" ng-if="!isLogin">
+                            <i class="fa fa-lock"></i>
+                        </div>
+                    </li>
+                </ul>
+                <ul class="nav pull-right top">
+                    <li>
+                        <div class="my-photo-box">
+                            <img class="img-circle header-img" src="/imgs/myPhoto.jpeg" alt="Generic placeholder image">
+                            <span class="header-name" bs-dropdown="adminMenu" placement="bottom-right" html="true" ng-if="isLogin">DongJun Kwon</span>
+                            <span class="header-name" ng-if="!isLogin" ng-click="openLogin();">DongJun Kwon</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+    </div>
+    <aside johayo-menu hide-menu="{{hideMenu}}"></aside>
+    <section ng-class="{'move-section' : hideMenu}" ng-click="windowSizeHideMenu()">
+        <article>
+            <spinner ng-show="loading"></spinner>
+            <ng-view ng-hide="loading"></ng-view>
+        </article>
+    </section>
+    <footer></footer>
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -51,53 +97,10 @@
             splashID: "#jSplash",
             loaderVPos: '47%',
             autoClose: true
+        }, function(){
+            $("#w").show();
         });
     </script>
-    <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
-        <div class="logo">
-            <a href="/" class="logo">
-                <img src="/imgs/logo.png" alt="Log">
-            </a>
-            <div class="sidebar-toggle-box" ng-click="hideMenu = !hideMenu">
-                <i class="fa fa-bars"></i>
-            </div>
-        </div>
-        <div class="header-menu clearfix">
-            <ul class="nav pull-left top">
-                <li>
-                   <div class="icon msg-box" ng-click="openMsg();">
-                       <i class="fa fa-envelope-o"></i>
-                   </div>
-                </li>
-                <li>
-                    <div class="icon admin-box" ng-if="isLogin">
-                        <i class="fa fa-unlock"></i>
-                    </div>
-                    <div class="icon admin-box" ng-click="openLogin()" ng-if="!isLogin">
-                        <i class="fa fa-lock"></i>
-                    </div>
-                </li>
-            </ul>
-            <ul class="nav pull-right top">
-                <li>
-                    <div class="my-photo-box">
-                        <img class="img-circle header-img" src="/imgs/myPhoto.jpeg" alt="Generic placeholder image">
-                        <span class="header-name" bs-dropdown="adminMenu" placement="bottom-right" html="true" ng-if="isLogin">DongJun Kwon</span>
-                        <span class="header-name" ng-if="!isLogin" ng-click="openLogin();">DongJun Kwon</span>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </header>
-    <aside johayo-menu hide-menu="{{hideMenu}}"></aside>
-    <section ng-class="{'move-section' : hideMenu}" ng-click="windowSizeHideMenu()">
-        <article>
-            <spinner ng-show="loading"></spinner>
-            <ng-view ng-hide="loading"></ng-view>
-        </article>
-    </section>
-    <footer></footer>
-
     <script src="/lib/js/angular/angular.min.js"></script>
     <script src="/lib/js/angular/angular-route.min.js"></script>
     <script src="/lib/js/angular/angular-resource.min.js"></script>
