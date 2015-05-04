@@ -46,9 +46,8 @@ router.post('/', function(req, res){
             {_id: new ObjectId(boardSeq)},
             {
                 $push: {commentList : {seq: seq, name : name, pw : pw, content : content, regDt : dateUtil.nowDateTypeDate()}},
-                new: true
             },
-            {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}},
+            {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}, new: true},
             function (err, data){
                 if(err){
                     throw err;
@@ -80,10 +79,9 @@ router.post('/delete', function(req, res){
     Board.findOneAndUpdate(
         {_id: new ObjectId(boardSeq)},
         {
-            $pull: {commentList : {pw: pw, seq: commentSeq}},
-            new: true
+            $pull: {commentList : {pw: pw, seq: commentSeq}}
         },
-        {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}},
+        {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}, new: true},
         function(err, data){
             if(err){
                 throw err;
@@ -112,7 +110,7 @@ router.put('/', function(req, res){
         {
             $set: {'commentList.$.content': content}
         },
-        {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}},
+        {fields : {'commentList.pw': 0, 'commentList.sub.pw' : 0}, new: true},
         function (err, data){
             if(err){
                 throw err;

@@ -109,7 +109,7 @@ app.use(function errorHandler(err, req, res, next) {
     }
 
     console.log('error on request %s | %s | %d'.red, req.method, req.url, err.status);
-    console.log(err.stack.red);
+    console.log(err.stack);
     err.message = err.status == 500 ? 'Something bad happened. :(' : err.message;
     res.status(err.status).send(err.message);
 });

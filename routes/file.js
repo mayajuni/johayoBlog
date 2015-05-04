@@ -32,14 +32,15 @@ router.post('/', function(req, res){
         file.size = files.myFile[0].size.toString();
         */
         var resultObj = {
-            name: files.myFile[0].originalFilename.toString(),
-            path: files.myFile[0].path.toString(),
+            name: files.myFile[0].originalFilename,
+            path: files.myFile[0].path,
             url: "/blog/" + files.myFile[0].path.replace(/(\/([^>]+)\/)/ig,"").replace(/(\\([^>]+)\\)/ig,""),
             virtualName: files.myFile[0].path.replace(/(\/([^>]+)\/)/ig,"").replace(/(\\([^>]+)\\)/ig,""),
-            size: files.myFile[0].size.toString(),
-            type : files.myFile[0].headers['content-type'].toString(),
+            size: files.myFile[0].size,
+            type : files.myFile[0].headers['content-type'],
             isImg: files.myFile[0].headers['content-type'].toString().indexOf('image') > -1
         };
+        var ltObj = files.myFile[0];
 
         fileUtil.saveFileInfo(resultObj);
 

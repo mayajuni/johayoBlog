@@ -22,6 +22,7 @@ angular.module('johayo.controller')
             $scope.editComment = function(commentDetail){
                 commentService.editComment($scope.boardDetail._id, commentDetail.seq, commentDetail.content, commentDetail.pw)
                     .then(function(data){
+                        console.log(data);
                         $scope.closeEditor();
                         $scope.boardDetail = data;
                         $scope.showWriteBox = false;
@@ -32,6 +33,7 @@ angular.module('johayo.controller')
             $scope.deleteComment = function(commentSeq, pw){
                 commentService.deleteComment($scope.boardDetail._id, commentSeq, pw)
                     .then(function(data){
+                        console.log(data);
                         $scope.boardDetail = data;
                     });
             };
