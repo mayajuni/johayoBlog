@@ -98,144 +98,6 @@ angular.module('johayo.directive', []);
 
 angular.module("templates", []);
 /**
- * Created by Administrator on 2014-08-11.
- */
-angular.module('errorHandler', [])
-
-// This is a generic retry queue for security failures.  Each item is expected to expose two functions: retry and cancel.
-    .factory('errorQueue', ['$q', '$log', function($q, $log) {
-        var errQueue = [];
-        var service = {
-            // The security service puts its own handler in here!
-            errorCallbacks: [],
-
-            hasMore: function() {
-                return errQueue.length > 0;
-            },
-            push: function(retryItem) {
-                errQueue.push(retryItem);
-                // Call all the onItemAdded callbacks
-                angular.forEach(service.errorCallbacks, function(cb) {
-                    try {
-                        cb(retryItem);
-                    } catch(e) {
-                        /*$log.error('errQueue.push(retryItem): callback threw an error' + e);*/
-                    }
-                });
-            },
-            pushErrorFn: function(status, msg) {
-                // The deferred object that will be resolved or rejected by calling retry or cancel
-                var retryItem = {
-                    status : status,
-                    msg : msg
-                };
-                service.push(retryItem);
-            }
-        };
-        return service;
-    }]);
-/**
- * Created by Administrator on 2014-08-08.
- */
-angular.module('interceptor', ['loginRetryQueue', 'errorHandler'])
-
-// This http interceptor listens for authentication failures
-    .factory('securityInterceptor', ['$injector', 'loginRetryQueue', 'errorQueue', function($injector, queue, err) {
-        return function(promise) {
-            // Intercept failed requests
-            return promise.then(null, function(originalResponse) {
-                if(originalResponse.status === 401) {
-                    // The request bounced because it was not authorized - add a new request to the retry queue
-                    promise = queue.pushRetryFn('unauthorized-server', function retryRequest() {
-                        // We must use $injector to get the $http service to prevent circular dependency
-                        return $injector.get('$http')(originalResponse.config);
-                    });
-                }
-                else if(originalResponse.status === 500 || originalResponse.status === 409){
-                    err.pushErrorFn(originalResponse.status, originalResponse.data);
-                }
-
-                return promise;
-            });
-        };
-    }]);
-/**
- * Created by Administrator on 2014-08-08.
- */
-angular.module('loginRetryQueue', [])
-
-// This is a generic retry queue for security failures.  Each item is expected to expose two functions: retry and cancel.
-    .factory('loginRetryQueue', ['$q', '$log', '$location', function($q, $log, $location) {
-        var retryQueue = [];
-        var service = {
-            // The security service puts its own handler in here!
-            onItemAddedCallbacks: [],
-
-            hasMore: function() {
-                return retryQueue.length > 0;
-            },
-            push: function(retryItem) {
-                retryQueue.push(retryItem);
-                // Call all the onItemAdded callbacks
-                angular.forEach(service.onItemAddedCallbacks, function(cb) {
-                    try {
-                        cb(retryItem);
-                    } catch(e) {
-                        $log.error('securityRetryQueue.push(retryItem): callback threw an error' + e);
-                    }
-                });
-            },
-            pushRetryFn: function(reason, retryFn) {
-                // The reason parameter is optional
-                if ( arguments.length === 1) {
-                    retryFn = reason;
-                    reason = undefined;
-                }
-
-                // The deferred object that will be resolved or rejected by calling retry or cancel
-                var deferred = $q.defer();
-                var retryItem = {
-                    reason: reason,
-                    retry: function() {
-                        // Wrap the result of the retryFn into a promise if it is not already
-                        $q.when(retryFn()).then(function(value) {
-                            // If it was successful then resolve our deferred
-                            deferred.resolve(value);
-                        }, function(value) {
-                            // Othewise reject it
-                            deferred.reject(value);
-                        });
-                    },
-                    cancel: function() {
-                        // Give up on retrying and reject our deferred
-                        deferred.reject();
-                    }
-                };
-                service.push(retryItem);
-                return deferred.promise;
-            },
-            retryReason: function() {
-                return service.hasMore() && retryQueue[0].reason;
-            },
-            cancelAll: function() {
-                while(service.hasMore()) {
-                    retryQueue.shift().cancel();
-                }
-
-                if($location.absUrl().indexOf('/sns/') > 0){
-                    location.href='/';
-                }
-            },
-            retryAll: function() {
-                while(service.hasMore()) {
-                    retryQueue.shift().retry();
-                }
-            }
-        };
-
-        return service;
-    }]);
-/**
  * Created by 동준 on 2014-11-25.
  */
 angular.module('johayo.controller')
@@ -728,66 +590,141 @@ angular.module('johayo.controller')
 /**
  * Created by Administrator on 2014-08-11.
  */
-angular.module("johayo.filter", [])
-    /* 글자수를 자르고 해당 글을 가지고 온다. */
-    .filter('limitAndJjum', function(limitToFilter){
-        return function(input, limit){
-            if(input){
-                if(input.length > limit){
-                    return limitToFilter(input, limit-3) + '...'
-                }
-                return input;
-            }
+angular.module('errorHandler', [])
 
-            return input;
-        }
-    })
-    /* html태그를 제외 하고 글자수를 자르고 해당 글을 가지고 온다. */
-    .filter('cutHtmlTagAndLimit', function(limitToFilter) {
-        return function(input, limit){
-            if(input){
-                var changeInput = input.replace(/(<([^>]+)>)/ig,"");
+// This is a generic retry queue for security failures.  Each item is expected to expose two functions: retry and cancel.
+    .factory('errorQueue', ['$q', '$log', function($q, $log) {
+        var errQueue = [];
+        var service = {
+            // The security service puts its own handler in here!
+            errorCallbacks: [],
 
-                if(changeInput.length > limit){
-                    return limitToFilter(changeInput, limit-3) + '...'
-                }
-                return changeInput;
+            hasMore: function() {
+                return errQueue.length > 0;
+            },
+            push: function(retryItem) {
+                errQueue.push(retryItem);
+                // Call all the onItemAdded callbacks
+                angular.forEach(service.errorCallbacks, function(cb) {
+                    try {
+                        cb(retryItem);
+                    } catch(e) {
+                        /*$log.error('errQueue.push(retryItem): callback threw an error' + e);*/
+                    }
+                });
+            },
+            pushErrorFn: function(status, msg) {
+                // The deferred object that will be resolved or rejected by calling retry or cancel
+                var retryItem = {
+                    status : status,
+                    msg : msg
+                };
+                service.push(retryItem);
             }
+        };
+        return service;
+    }]);
+/**
+ * Created by Administrator on 2014-08-08.
+ */
+angular.module('interceptor', ['loginRetryQueue', 'errorHandler'])
 
-            return input;
+// This http interceptor listens for authentication failures
+    .factory('securityInterceptor', ['$injector', 'loginRetryQueue', 'errorQueue', function($injector, queue, err) {
+        return function(promise) {
+            // Intercept failed requests
+            return promise.then(null, function(originalResponse) {
+                if(originalResponse.status === 401) {
+                    // The request bounced because it was not authorized - add a new request to the retry queue
+                    promise = queue.pushRetryFn('unauthorized-server', function retryRequest() {
+                        // We must use $injector to get the $http service to prevent circular dependency
+                        return $injector.get('$http')(originalResponse.config);
+                    });
+                }
+                else if(originalResponse.status === 500 || originalResponse.status === 409){
+                    err.pushErrorFn(originalResponse.status, originalResponse.data);
+                }
+
+                return promise;
+            });
         };
-    })
-    /* 주소를 변경해서 넘겨준다. */
-    .filter('getAttrSrc',['$sce', function($sce) {
-        return function(input, type){
-            if(input){
-                var tag = '<div>'+input+'<div>';
-                if(type=='img'){
-                    return $sce.trustAsResourceUrl($(tag).find('img:first').attr('src'));
-                }else{
-                    return $sce.trustAsResourceUrl($(tag).find('iframe:first').attr('src'));
+    }]);
+/**
+ * Created by Administrator on 2014-08-08.
+ */
+angular.module('loginRetryQueue', [])
+
+// This is a generic retry queue for security failures.  Each item is expected to expose two functions: retry and cancel.
+    .factory('loginRetryQueue', ['$q', '$log', '$location', function($q, $log, $location) {
+        var retryQueue = [];
+        var service = {
+            // The security service puts its own handler in here!
+            onItemAddedCallbacks: [],
+
+            hasMore: function() {
+                return retryQueue.length > 0;
+            },
+            push: function(retryItem) {
+                retryQueue.push(retryItem);
+                // Call all the onItemAdded callbacks
+                angular.forEach(service.onItemAddedCallbacks, function(cb) {
+                    try {
+                        cb(retryItem);
+                    } catch(e) {
+                        $log.error('securityRetryQueue.push(retryItem): callback threw an error' + e);
+                    }
+                });
+            },
+            pushRetryFn: function(reason, retryFn) {
+                // The reason parameter is optional
+                if ( arguments.length === 1) {
+                    retryFn = reason;
+                    reason = undefined;
+                }
+
+                // The deferred object that will be resolved or rejected by calling retry or cancel
+                var deferred = $q.defer();
+                var retryItem = {
+                    reason: reason,
+                    retry: function() {
+                        // Wrap the result of the retryFn into a promise if it is not already
+                        $q.when(retryFn()).then(function(value) {
+                            // If it was successful then resolve our deferred
+                            deferred.resolve(value);
+                        }, function(value) {
+                            // Othewise reject it
+                            deferred.reject(value);
+                        });
+                    },
+                    cancel: function() {
+                        // Give up on retrying and reject our deferred
+                        deferred.reject();
+                    }
+                };
+                service.push(retryItem);
+                return deferred.promise;
+            },
+            retryReason: function() {
+                return service.hasMore() && retryQueue[0].reason;
+            },
+            cancelAll: function() {
+                while(service.hasMore()) {
+                    retryQueue.shift().cancel();
+                }
+
+                if($location.absUrl().indexOf('/sns/') > 0){
+                    location.href='/';
+                }
+            },
+            retryAll: function() {
+                while(service.hasMore()) {
+                    retryQueue.shift().retry();
                 }
             }
-            return input;
         };
-    }])
-    .filter('changeTrustAdHtml',['$sce', function($sce) {
-        return function(input){
-            if(input){
-                return $sce.trustAsHtml(input);
-            }
-            return input;
-        };
-    }])
-    .filter('firstCharUpper', function() {
-        return function(input){
-            if(input){
-                return input.substring(0,1).toUpperCase()+input.substring(1,input.length);;
-            }
-            return input;
-        };
-    })
-;
+
+        return service;
+    }]);
 /**
  * Created by 동준 on 2015-03-24.
  */
@@ -903,6 +840,69 @@ angular.module('johayo.directive')
             controller : 'sideMenuController'
         }
     });
+/**
+ * Created by Administrator on 2014-08-11.
+ */
+angular.module("johayo.filter", [])
+    /* 글자수를 자르고 해당 글을 가지고 온다. */
+    .filter('limitAndJjum', function(limitToFilter){
+        return function(input, limit){
+            if(input){
+                if(input.length > limit){
+                    return limitToFilter(input, limit-3) + '...'
+                }
+                return input;
+            }
+
+            return input;
+        }
+    })
+    /* html태그를 제외 하고 글자수를 자르고 해당 글을 가지고 온다. */
+    .filter('cutHtmlTagAndLimit', function(limitToFilter) {
+        return function(input, limit){
+            if(input){
+                var changeInput = input.replace(/(<([^>]+)>)/ig,"");
+
+                if(changeInput.length > limit){
+                    return limitToFilter(changeInput, limit-3) + '...'
+                }
+                return changeInput;
+            }
+
+            return input;
+        };
+    })
+    /* 주소를 변경해서 넘겨준다. */
+    .filter('getAttrSrc',['$sce', function($sce) {
+        return function(input, type){
+            if(input){
+                var tag = '<div>'+input+'<div>';
+                if(type=='img'){
+                    return $sce.trustAsResourceUrl($(tag).find('img:first').attr('src'));
+                }else{
+                    return $sce.trustAsResourceUrl($(tag).find('iframe:first').attr('src'));
+                }
+            }
+            return input;
+        };
+    }])
+    .filter('changeTrustAdHtml',['$sce', function($sce) {
+        return function(input){
+            if(input){
+                return $sce.trustAsHtml(input);
+            }
+            return input;
+        };
+    }])
+    .filter('firstCharUpper', function() {
+        return function(input){
+            if(input){
+                return input.substring(0,1).toUpperCase()+input.substring(1,input.length);;
+            }
+            return input;
+        };
+    })
+;
 /**
  * Created by 동준 on 2014-11-25.
  */

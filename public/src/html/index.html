@@ -23,131 +23,99 @@
     <link rel="stylesheet" href="/lib/css/angular/strap/libraries.min.css">
     <link rel="stylesheet" href="/lib/css/angular/strap/main.min.css">
     <link rel="stylesheet" href="/lib/css/angular/clock/clock.min.css">
-    <link rel="stylesheet" href="/css/johayo.css"/>
-    <link rel="stylesheet" href="/css/spinner.css"/>
+    <link rel="stylesheet" href="/dist/css/johayo.min.css"/>
 
     <!-- lib -->
     <script src="/lib/js/jquery/jquery-1.11.1.min.js"></script>
     <script src="/lib/js/jquery/jpreloader.min.js"></script>
 </head>
 <body ng-controller="indexController">
-    <div id="jSplash">
-        <div class="selected">
-            <h2>Johayo Blog</h2>
+<div id="jSplash">
+    <div class="selected">
+        <h2>Johayo Blog</h2>
+    </div>
+</div>
+<div id="w" style="display: none;">
+    <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
+        <div class="logo">
+            <a href="/" class="logo">
+                <img src="/dist/imgs/logo.png" alt="Log">
+            </a>
+            <div class="sidebar-toggle-box" ng-click="hideMenu = !hideMenu">
+                <i class="fa fa-bars"></i>
+            </div>
         </div>
-    </div>
-    <div id="w" style="display: none;">
-        <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
-            <div class="logo">
-                <a href="/" class="logo">
-                    <img src="/dist/imgs/logo.png" alt="Log">
-                </a>
-                <div class="sidebar-toggle-box" ng-click="hideMenu = !hideMenu">
-                    <i class="fa fa-bars"></i>
-                </div>
-            </div>
-            <div class="header-menu clearfix">
-                <ul class="nav pull-left top">
-                    <li>
-                        <div class="icon msg-box" ng-click="openMsg();">
-                            <i class="fa fa-envelope-o"></i>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="icon admin-box" ng-if="isLogin">
-                            <i class="fa fa-unlock"></i>
-                        </div>
-                        <div class="icon admin-box" ng-click="openLogin()" ng-if="!isLogin">
-                            <i class="fa fa-lock"></i>
-                        </div>
-                    </li>
-                </ul>
-                <ul class="nav pull-right top">
-                    <li>
-                        <div class="my-photo-box">
-                            <img class="img-circle header-img" src="/dist/imgs/myPhoto.jpeg" alt="Generic placeholder image">
-                            <span class="header-name" bs-dropdown="adminMenu" placement="bottom-right" html="true" ng-if="isLogin">DongJun Kwon</span>
-                            <span class="header-name" ng-if="!isLogin" ng-click="openLogin();">DongJun Kwon</span>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </header>
-    </div>
-    <aside johayo-menu hide-menu="{{hideMenu}}"></aside>
-    <section ng-class="{'move-section' : hideMenu}" ng-click="windowSizeHideMenu()">
-        <article>
-            <spinner ng-show="loading"></spinner>
-            <ng-view ng-hide="loading"></ng-view>
-        </article>
-    </section>
-    <footer></footer>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        <div class="header-menu clearfix">
+            <ul class="nav pull-left top">
+                <li>
+                    <div class="icon msg-box" ng-click="openMsg();">
+                        <i class="fa fa-envelope-o"></i>
+                    </div>
+                </li>
+                <li>
+                    <div class="icon admin-box" ng-if="isLogin">
+                        <i class="fa fa-unlock"></i>
+                    </div>
+                    <div class="icon admin-box" ng-click="openLogin()" ng-if="!isLogin">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                </li>
+            </ul>
+            <ul class="nav pull-right top">
+                <li>
+                    <div class="my-photo-box">
+                        <img class="img-circle header-img" src="/dist/imgs/myPhoto.jpeg" alt="Generic placeholder image">
+                        <span class="header-name" bs-dropdown="adminMenu" placement="bottom-right" html="true" ng-if="isLogin">DongJun Kwon</span>
+                        <span class="header-name" ng-if="!isLogin" ng-click="openLogin();">DongJun Kwon</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+</div>
+<aside johayo-menu hide-menu="{{hideMenu}}"></aside>
+<section ng-class="{'move-section' : hideMenu}" ng-click="windowSizeHideMenu()">
+    <article>
+        <spinner ng-show="loading"></spinner>
+        <ng-view ng-hide="loading"></ng-view>
+    </article>
+</section>
+<footer></footer>
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-        ga('create', 'UA-57469105-1', 'auto');
-        ga('send', 'pageview');
+    ga('create', 'UA-57469105-1', 'auto');
+    ga('send', 'pageview');
 
-        // Preload the page with jPreLoader
-        $('body').jpreLoader({
-            splashID: "#jSplash",
-            loaderVPos: '47%',
-            autoClose: true
-        }, function(){
-            $("#w").show();
-        });
-    </script>
-    <script src="/lib/js/angular/angular.min.js"></script>
-    <script src="/lib/js/angular/angular-route.min.js"></script>
-    <script src="/lib/js/angular/angular-resource.min.js"></script>
-    <script src="/lib/js/angular/angular-animate.min.js"></script>
-    <script src="/lib/js/angular/strap/angular-strap.min.js"></script>
-    <script src="/lib/js/angular/strap/angular-strap.tpl.min.js"></script>
-    <script src="/lib/js/angular/ngDialog/ngDialog.min.js"></script>
-    <script src="/lib/js/angular/textEditor/textAngular.min.js"></script>
-    <script src="/lib/js/angular/textEditor/textAngular-sanitize.min.js"></script>
-    <script src="/lib/js/angular/fileUpload/angular-file-upload-shim.js"></script>
-    <script src="/lib/js/angular/fileUpload/angular-file-upload.min.js"></script>
-    <script src="/lib/js/angular/johayo/johayo-clock.js"></script>
-    <script src="/lib/js/bootstrap/bootstrap.min.js"></script>
+    // Preload the page with jPreLoader
+    $('body').jpreLoader({
+        splashID: "#jSplash",
+        loaderVPos: '47%',
+        autoClose: true
+    }, function(){
+        $("#w").show();
+    });
+</script>
+<script src="/lib/js/angular/angular.min.js"></script>
+<script src="/lib/js/angular/angular-route.min.js"></script>
+<script src="/lib/js/angular/angular-resource.min.js"></script>
+<script src="/lib/js/angular/angular-animate.min.js"></script>
+<script src="/lib/js/angular/strap/angular-strap.min.js"></script>
+<script src="/lib/js/angular/strap/angular-strap.tpl.min.js"></script>
+<script src="/lib/js/angular/ngDialog/ngDialog.min.js"></script>
+<script src="/lib/js/angular/textEditor/textAngular.min.js"></script>
+<script src="/lib/js/angular/textEditor/textAngular-sanitize.min.js"></script>
+<script src="/lib/js/angular/fileUpload/angular-file-upload-shim.js"></script>
+<script src="/lib/js/angular/fileUpload/angular-file-upload.min.js"></script>
+<script src="/lib/js/angular/johayo/johayo-clock.js"></script>
+<script src="/lib/js/bootstrap/bootstrap.min.js"></script>
 
-    <!-- app -->
-    <script src="/src/js/app.js"></script>
+<script src="/dist/js/app.min.js"></script>
+<script src="/dist/template/templates.js"></script>
 
-    <!-- controller -->
-    <script src="/src/js/controller/indexController.js"></script>
-    <script src="/src/js/controller/menuController.js"></script>
-    <script src="/src/js/controller/loginController.js"></script>
-    <script src="/src/js/controller/mainController.js"></script>
-    <script src="/src/js/controller/boardController.js"></script>
-    <script src="/src/js/controller/commentController.js"></script>
-    <script src="/src/js/controller/bookmarkController.js"></script>
-    <script src="/src/js/controller/msgController.js"></script>
 
-    <!-- service -->
-    <script src="/src/js/service/menuService.js"></script>
-    <script src="/src/js/service/errorService.js"></script>
-    <script src="/src/js/service/loginService.js"></script>
-    <script src="/src/js/service/boardService.js"></script>
-    <script src="/src/js/service/commentService.js"></script>
-    <script src="/src/js/service/fileService.js"></script>
-    <script src="/src/js/service/bookmarkService.js"></script>
-    <script src="/src/js/service/msgService.js"></script>
-
-    <!-- directive -->
-    <script src="/src/js/directive/menuDirective.js"></script>
-    <script src="/src/js/directive/commonDirective.js"></script>
-    <script src="/src/js/directive/bookmarkDirective.js"></script>
-
-    <!-- filter -->
-    <script src="/src/js/filter/commonFilter.js"></script>
-
-    <!-- config -->
-    <script src="/src/js/config/errorQueue.js"></script>
-    <script src="/src/js/config/interceptor.js"></script>
-    <script src="/src/js/config/loginRetryQueue.js"></script>
 </body>
 </html>

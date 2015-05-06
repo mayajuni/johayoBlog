@@ -14,7 +14,8 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
     del = require('del'),
     csslint = require('gulp-csslint'),
-    templateCache = require('gulp-angular-templatecache');
+    templateCache = require('gulp-angular-templatecache'),
+    minifyHTML = require('gulp-minify-html');
 
 // Styles
 gulp.task('styles', function() {
@@ -55,14 +56,21 @@ gulp.task('angular-template', function(){
         .pipe(notify({ message: 'template task complete' }));
 });
 
+// index.html 파일 복사
+gulp.task('htmlify', function(){
+    return gulp.src('public/src/html/index.html')
+        .pipe(minifyHTML({}))
+        .pipe(gulp.dest('public/dist'));
+});
+
 // Clean
 gulp.task('clean', function(cb) {
-    del(['public/dist/css', 'public/dist/js', 'public/dist/imgs', 'public/dist/template'], cb)
+    del(['public/dist'], cb)
 });
 
 // Default task
 gulp.task('default', ['clean'], function() {
-    gulp.start('styles', 'angular-template', 'scripts', 'images');
+    gulp.start('styles', 'angular-template', 'scripts', 'images', 'htmlify');
 });
 
 // Watch
@@ -79,6 +87,9 @@ gulp.task('watch', function() {
 
     // Watch html files
     gulp.watch('public/src/html/**/*.html', ['angular-template']);
+
+    // Watch html files
+    gulp.watch('public/src/html/index.html', ['htmlify']);
 
     // Create LiveReload server
     livereload.listen();
