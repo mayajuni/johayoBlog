@@ -1,1 +1,0 @@
-angular.module('johayo.directive').directive('bookmark',function(){return{restrict:'AE',templateUrl:'/html/bookmark/bookmark.html',controller:'bookmarkController'}});

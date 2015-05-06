@@ -32,7 +32,7 @@ var msg = require('./routes/msg');
 var app = express();
 
 // uncomment after placing your favicon in /public
-app.use(favicon(__dirname + '/public/imgs/favicon.ico'));
+app.use(favicon(__dirname + '/public/dist/imgs/favicon.ico'));
 app.use(logger('dev'));
 app.use(domain);
 app.use(bodyParser.json());
@@ -84,7 +84,7 @@ app.use('/api/adminBoard', adminBoard);
 /* 일단 get으로 요청된 것들은 바로 index.html으로 보여준다. */
 app.get('/', function(req, res) {
     /*res.sendFile(__dirname + '/public/html/comming.html');*/
-    res.sendFile(__dirname + '/public/html/index.html');
+    res.sendFile(__dirname + '/public/dist/index.html');
 });
 
 // catch 404 and forward to error handler

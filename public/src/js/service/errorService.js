@@ -12,7 +12,7 @@ angular.module("johayo.service")
             }
 
             errorDialog = ngDialog.open({
-                template: '/html/error/error.html',
+                template: 'error/error.html',
                 className: 'ngdialog-theme-error ngdialog-theme-custom-error',
                 controller : ['$scope', function($scope){
                     $('#close').focus();

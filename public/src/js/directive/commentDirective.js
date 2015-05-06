@@ -6,7 +6,7 @@ angular.module('johayo.directive')
         return {
             restrict: 'AE',
             replace: true,
-            templateUrl : '/html/comment/comment.html',
+            templateUrl : 'comment/comment.html',
             scope : {
                 commentList : "="
             },

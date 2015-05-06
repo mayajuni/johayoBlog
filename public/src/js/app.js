@@ -15,14 +15,15 @@ angular.module('johayo', [
     "ngDialog",
     'textAngular',
     "mgcrea.ngStrap",
-    'angularFileUpload'
+    'angularFileUpload',
+    "templates"
 ])
     .config(['$httpProvider', function($httpProvider) {
         $httpProvider.responseInterceptors.push('securityInterceptor');
     }]).config(['$routeProvider', '$locationProvider', function($routeProvider) {
         $routeProvider
             .when('/', {
-                templateUrl: '/html/main/main.html',
+                templateUrl: 'main/main.html',
                 controller: 'mainController',
                 resolve: {
                     boardList : function(boardService){
@@ -33,11 +34,11 @@ angular.module('johayo', [
                 }
             })
             .when('/bookmark', {
-                templateUrl: '/html/bookmark/bookmark.html',
+                templateUrl: 'bookmark/bookmark.html',
                 controller : 'bookmarkController'
             })
             .when('/admin/menu', {
-                templateUrl: '/html/menu/adminMenu.html',
+                templateUrl: 'menu/adminMenu.html',
                 controller: 'adminMenuController',
                 resolve : {
                     menuList : function(menuService, loginService){
@@ -51,7 +52,7 @@ angular.module('johayo', [
                 }
             })
             .when('/admin/board', {
-                templateUrl: '/html/board/boardAdd.html',
+                templateUrl: 'board/boardAdd.html',
                 controller: 'boardAddController',
                 resolve : {
                     menuList : function(menuService, loginService){
@@ -65,7 +66,7 @@ angular.module('johayo', [
                 }
             })
             .when('/board/:division', {
-                templateUrl: '/html/board/board.html',
+                templateUrl: 'board/board.html',
                 controller: 'boardController',
                 resolve : {
                     boardList : function(boardService, $route){
@@ -76,7 +77,7 @@ angular.module('johayo', [
                 }
             })
             .when('/board/:division/:seq', {
-                templateUrl: '/html/board/boardDetail.html',
+                templateUrl: 'board/boardDetail.html',
                 controller: 'boardDetailController',
                 resolve : {
                     boardDetail : function(boardService, $route){
@@ -94,3 +95,5 @@ angular.module('johayo.controller', []);
 angular.module('johayo.service', []);
 
 angular.module('johayo.directive', []);
+
+angular.module("templates", []);

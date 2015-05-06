@@ -9,7 +9,7 @@
     <title>johayo_Blog</title>
 
     <!-- favicon -->
-    <link rel="icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/dist/imgs/favicon.ico" type="image/x-icon">
 
     <!-- css -->
     <link rel="stylesheet" href="/lib/css/bootstrap/css/bootstrap.min.css"/>
@@ -40,7 +40,7 @@
         <header window-width-check window-size="windowSize" class="fixed-top header clearfix">
             <div class="logo">
                 <a href="/" class="logo">
-                    <img src="/imgs/logo.png" alt="Log">
+                    <img src="/dist/imgs/logo.png" alt="Log">
                 </a>
                 <div class="sidebar-toggle-box" ng-click="hideMenu = !hideMenu">
                     <i class="fa fa-bars"></i>
@@ -65,7 +65,7 @@
                 <ul class="nav pull-right top">
                     <li>
                         <div class="my-photo-box">
-                            <img class="img-circle header-img" src="/imgs/myPhoto.jpeg" alt="Generic placeholder image">
+                            <img class="img-circle header-img" src="/dist/imgs/myPhoto.jpeg" alt="Generic placeholder image">
                             <span class="header-name" bs-dropdown="adminMenu" placement="bottom-right" html="true" ng-if="isLogin">DongJun Kwon</span>
                             <span class="header-name" ng-if="!isLogin" ng-click="openLogin();">DongJun Kwon</span>
                         </div>
@@ -115,39 +115,39 @@
     <script src="/lib/js/bootstrap/bootstrap.min.js"></script>
 
     <!-- app -->
-    <script src="/js/app.js"></script>
+    <script src="/src/js/app.js"></script>
 
     <!-- controller -->
-    <script src="/js/back/controller/indexController.js"></script>
-    <script src="/js/back/controller/menuController.js"></script>
-    <script src="/js/back/controller/loginController.js"></script>
-    <script src="/js/back/controller/mainController.js"></script>
-    <script src="/js/back/controller/boardController.js"></script>
-    <script src="/js/back/controller/commentController.js"></script>
-    <script src="/js/back/controller/bookmarkController.js"></script>
-    <script src="/js/back/controller/msgController.js"></script>
+    <script src="/src/js/controller/indexController.js"></script>
+    <script src="/src/js/controller/menuController.js"></script>
+    <script src="/src/js/controller/loginController.js"></script>
+    <script src="/src/js/controller/mainController.js"></script>
+    <script src="/src/js/controller/boardController.js"></script>
+    <script src="/src/js/controller/commentController.js"></script>
+    <script src="/src/js/controller/bookmarkController.js"></script>
+    <script src="/src/js/controller/msgController.js"></script>
 
     <!-- service -->
-    <script src="/js/service/menuService.js"></script>
-    <script src="/js/service/errorService.js"></script>
-    <script src="/js/service/loginService.js"></script>
-    <script src="/js/service/boardService.js"></script>
-    <script src="/js/service/commentService.js"></script>
-    <script src="/js/service/fileService.js"></script>
-    <script src="/js/service/bookmarkService.js"></script>
-    <script src="/js/service/msgService.js"></script>
+    <script src="/src/js/service/menuService.js"></script>
+    <script src="/src/js/service/errorService.js"></script>
+    <script src="/src/js/service/loginService.js"></script>
+    <script src="/src/js/service/boardService.js"></script>
+    <script src="/src/js/service/commentService.js"></script>
+    <script src="/src/js/service/fileService.js"></script>
+    <script src="/src/js/service/bookmarkService.js"></script>
+    <script src="/src/js/service/msgService.js"></script>
 
     <!-- directive -->
-    <script src="/js/directive/menuDirective.js"></script>
-    <script src="/js/directive/commonDirective.js"></script>
-    <script src="/js/directive/bookmarkDirective.js"></script>
+    <script src="/src/js/directive/menuDirective.js"></script>
+    <script src="/src/js/directive/commonDirective.js"></script>
+    <script src="/src/js/directive/bookmarkDirective.js"></script>
 
     <!-- filter -->
-    <script src="/js/filter/commonFilter.js"></script>
+    <script src="/src/js/filter/commonFilter.js"></script>
 
     <!-- config -->
-    <script src="/js/config/errorQueue.js"></script>
-    <script src="/js/config/interceptor.js"></script>
-    <script src="/js/config/loginRetryQueue.js"></script>
+    <script src="/src/js/config/errorQueue.js"></script>
+    <script src="/src/js/config/interceptor.js"></script>
+    <script src="/src/js/config/loginRetryQueue.js"></script>
 </body>
 </html>

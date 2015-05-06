@@ -11,7 +11,7 @@ angular.module("johayo.service")
             }
 
             loginDialog = ngDialog.open({
-                template: '/html/login/login.html',
+                template: 'login/login.html',
                 controller: 'loginController',
                 className: 'ngdialog-theme-default ngdialog-theme-custom'
             });

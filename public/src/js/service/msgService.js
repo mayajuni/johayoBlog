@@ -8,7 +8,7 @@ angular.module("johayo.service")
             // Show the modal login dialog
             openMsg: function() {
                 ngDialog.open({
-                    template: '/html/msg/msg.html',
+                    template: 'msg/msg.html',
                     controller: 'msgController',
                     className: 'ngdialog-theme-flat'
                 });

@@ -5,7 +5,7 @@ angular.module('johayo.directive')
     .directive('johayoMenu', function($window){
         return {
             restrict: 'A',
-            templateUrl : '/html/menu/sideMenu.html',
+            templateUrl : 'menu/sideMenu.html',
             scope : {
                 hideMenu : '@'
             },
