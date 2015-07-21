@@ -9,8 +9,9 @@
                     <label for="select">What kind of Board?</label>
                     <select id="select" ng-model="board.division" class="form-control">
                         <option value="">--choose--</option>
-                        <optgroup ng-repeat="list in menuList" ng-if="list.isBoard" label="{{list.name}}">
-                            <option ng-repeat="subList in list.subMenuList | orderBy : 'rank' : false" value="{{subList.name}}">{{subList.name}}</option>
+                        <optgroup ng-repeat="list in menuList | orderBy : 'rank' : false" ng-if="list.isBoard" label="{{list.name}}">
+                            <option ng-repeat="subList in list.subMenuList | orderBy : 'rank' : false" ng-if="list.subMenuList.length > 0" value="{{subList.name}}">{{subList.name}}</option>
+                            <option ng-if="list.subMenuList.length < 1" value="{{list.name}}">{{list.name}}</option>
                         </optgroup>
                     </select>
                 </div>

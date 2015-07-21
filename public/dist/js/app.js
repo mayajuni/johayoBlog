@@ -98,496 +98,6 @@ angular.module('johayo.directive', []);
 
 angular.module("templates", []);
 /**
- * Created by 동준 on 2014-11-25.
- */
-angular.module('johayo.controller')
-    .controller('boardController', ['$scope', 'boardService', 'boardList', '$location',
-        function($scope, boardService, boardList, $location){
-            /* 상세 갈때 쓴다. */
-            $scope.path = $location.path();
-            $scope.boardList = boardList;
-            $scope.activePanel = 0;
-
-            $scope.getColor = function(index){
-                return {
-                    'list-group-item-success' : index % 4 == 0,
-                    'list-group-item-warning' : index % 4 == 1,
-                    'list-group-item-info' : index % 4 == 2,
-                    'list-group-item-danger' : index % 4 == 3
-                }
-            };
-        }])
-    .controller('boardDetailController', ['$scope', 'boardService', 'boardDetail', '$location', '$routeParams',
-        function($scope, boardService, boardDetail, $location, $routeParams){
-            $scope.boardDetail = boardDetail;
-            $scope.boardConfig = [
-                {text: '<i class="glyphicon glyphicon-pencil"></i> Edit', click: 'showEditor()'},
-                {text: '<i class="glyphicon glyphicon-remove"></i> Delete', click: 'deleteBoard()'},
-            ];
-
-            $scope.boardFils = new Array();
-
-            if(boardDetail.fileList.length > 0){
-                for(var i=0;i<boardDetail.fileList.length;i++){
-                    var classNm = boardDetail.fileList[i].isImg ? '<i class="fa fa-file-image-o"></i> ' : '<i class="fa fa-file-text-o"></i> ';
-                    $scope.boardFils.push({
-                        text: classNm + boardDetail.fileList[i].name,
-                        href: '/download?path='+boardDetail.fileList[i].path +'&name='+boardDetail.fileList[i].name,
-                        target: "_self"
-                    });
-                }
-            }
-
-            $scope.deleteBoard = function(){
-                boardService.delete(boardDetail._id).then(function(){
-                    $location.path('/board/'+$routeParams.division);
-                });
-            }
-
-        }])
-    .controller('boardAddController', ['$scope', 'boardService', 'menuList', 'fileService',
-        function($scope, boardService, menuList, fileService){
-            $scope.menuList = menuList;
-
-            $scope.cleanScope = function(){
-                $scope.uploadFileList = new Array();
-                $scope.selectedFiles = new Array();
-                $scope.board = {};
-            };
-
-            $scope.addBoard = function(){
-                $scope.board.fileList = $scope.uploadFileList;
-                boardService.save($scope.board).then(function(){
-                    $scope.cleanScope();
-                    alert('ok');
-                });
-            };
-
-            $scope.onFileSelect = function($files) {
-                for ( var i = 0; i < $files.length; i++) {
-                    $scope.selectedFiles.push($files[i]);
-                    var count = $scope.selectedFiles.length*1-1 ;
-                    $scope.selectedFiles[count].isImg = $scope.selectedFiles[count].type.indexOf('image') > -1;
-                    $scope.uploadFile(count);
-                }
-            };
-
-            $scope.uploadFile = function(index){
-                $scope.selectedFiles[index].progress = 0;
-                fileService.fileUpload($scope.selectedFiles[index], 'board')
-                    .then(function(data){
-                        $scope.uploadFileList.push(data);
-                    },function(err){
-                        $scope.selectedFiles[index].progress = 0;
-                        $scope.selectedFiles[index].error = err;
-                    },function(evt){
-                        $scope.selectedFiles[index].progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                    });
-            };
-
-            $scope.deleteFile = function(index, filePath){
-                fileService.deleteFile(filePath).then(function(){
-                    $scope.uploadFileList.splice(index,1);
-                    $scope.selectedFiles.splice(index,1);
-                });
-            };
-
-            $scope.cleanScope();
-        }]);
-/**
- * Created by 동준 on 2014-12-08.
- */
-angular.module('johayo.controller')
-    .controller('bookmarkController', ['$scope', 'bookmarkService', 'boardService', 'fileService',
-        function($scope, bookmarkService, boardService, fileService){
-            $scope.cleanBookmark = function(){
-                $scope.bookmark = {
-                    division : 'bookmark',
-                    fileList : new Array()
-                };
-            };
-            $scope.urlImgFile = {};
-            $scope.search = {};
-
-            var oldUrl = '';
-            $scope.addBookmark = function(bookmark){
-                boardService.save(bookmark).then(function(){
-                    $scope.cleanBookmark();
-                    $scope.getList();
-                });
-            };
-
-            $scope.deleteBookmark = function(seq){
-                boardService.delete(seq).then(function(){
-                    $scope.getList();
-                });
-            };
-
-            $scope.getList = function(){
-                boardService.list($scope.bookmark.division).then(function(data){
-                    $scope.bookmarkList = data;
-                });
-            };
-
-            $scope.getUrlImg = function(url){
-                if(!url || oldUrl == url){
-                    return;
-                }
-
-                oldUrl = url;
-
-                if(!!$scope.bookmark.fileList[0] && !!$scope.bookmark.fileList[0].path){
-                    fileService.deleteFile($scope.bookmark.fileList[0].path);
-                    $scope.bookmark.fileList[0] = {};
-                }
-
-                console.log(validateURL(url));
-                if(!validateURL(url) || url == 'test'){
-                    return;
-                }
-                $scope.showSpinner = true;
-
-                bookmarkService.getImg(url)
-                    .then(function(data){
-                        $scope.bookmark.fileList[0] = data;
-                        $scope.showSpinner = false;
-                    });
-            };
-
-            $scope.cleanBookmark();
-            $scope.getList();
-
-            function validateURL(textval) {
-                var urlregex = new RegExp(
-                    "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
-                return urlregex.test(textval);
-            }
-        }]);
-/**
- * Created by 동준 on 2014-11-27.
- */
-angular.module('johayo.controller')
-    .controller('commentController', ['$scope', 'commentService',
-        function($scope, commentService){
-            /* 댓글 달때 씀 */
-            $scope.comment = {};
-            /* 댓글 수정시 글을 안보이고 editor를 보이게 할지 설정 */
-            $scope.isShowEditor = {};
-
-            /* 댓글 등록 */
-            $scope.addComment = function(){
-                commentService.addComment($scope.boardDetail._id, $scope.comment.content, $scope.comment.name, $scope.comment.pw)
-                    .then(function(data){
-                        $scope.boardDetail = data;
-                        $scope.comment = {};
-                    });
-            };
-
-            /* 댓글 수정 */
-            $scope.editComment = function(commentDetail){
-                commentService.editComment($scope.boardDetail._id, commentDetail.seq, commentDetail.content, commentDetail.pw)
-                    .then(function(data){
-                        console.log(data);
-                        $scope.closeEditor();
-                        $scope.boardDetail = data;
-                        $scope.showWriteBox = false;
-                    });
-            };
-
-            /* 댓글 삭제 */
-            $scope.deleteComment = function(commentSeq, pw){
-                commentService.deleteComment($scope.boardDetail._id, commentSeq, pw)
-                    .then(function(data){
-                        console.log(data);
-                        $scope.boardDetail = data;
-                    });
-            };
-
-            /* 유효성 체크 */
-            $scope.checkVal = function(val){
-                var checkContent = true;
-                if(!!val.content){
-                    checkContent = val.content.replace(/(<([^>]+)>)/ig,"") == ''
-                }
-                return checkContent || (!$scope.isLogin && (!val.name || !val.pw));
-            };
-
-            /* 댓글 수정시 다른 곳의 댓글들의 editor 연것을 안보이게 하고 해당 부분을 보이게 한다. */
-            $scope.showEditor = function(seq, subSeq){
-                $scope.showWriteBox = true;
-                if(!!subSeq){
-                    if(!$scope.isShowSubEditor[seq+'-'+subSeq]){
-                        $scope.closeEditor();
-                        $scope.isShowSubEditor[seq+'-'+subSeq] = true;
-                    }else{
-                        $scope.closeEditor();
-                    }
-                }else{
-                    if(!$scope.isShowEditor[seq]){
-                        $scope.closeEditor();
-                        $scope.isShowEditor[seq] = true;
-                    }else{
-                        $scope.closeEditor();
-                    }
-                }
-            };
-
-            /* 댓글 다 닫기 */
-            $scope.closeEditor = function(){
-                if(!!$scope.boardDetail.commentList){
-                    for(var i=0;i<$scope.boardDetail.commentList.length;i++){
-                        $scope.isShowEditor[$scope.boardDetail.commentList[i].seq] = false;
-                    }
-                }
-            };
-        }]);
-/**
- * Created by 동준 on 2014-11-14.
- */
-angular.module('johayo.controller')
-    .controller('indexController', ['$rootScope', '$scope', 'loginService', 'errorService', 'msgService',
-        function($rootScope, $scope, loginService, errorService, msgService){
-            /* 윈도우 창의 크기를 체크 */
-            $scope.windowSize = {};
-
-            $scope.openLogin = function(){
-                loginService.openLogin();
-            };
-
-            $scope.openMsg = function(){
-                msgService.openMsg();
-            };
-
-            $scope.logout = function(){
-                loginService.logout();
-            };
-
-            /**
-             * 로그인 한후 정보를 다시 가지고 온다.
-             */
-            $rootScope.$on('getLoginInfo', function(){
-                $scope.getLoginInfo();
-            });
-
-            $rootScope.$on("$routeChangeStart", function(){
-                $scope.loading = true;
-                /* 윈도우 창에 따른 메뉴 보이기 안보이기 체크 */
-                $scope.windowSizeHideMenu();
-            });
-
-            $rootScope.$on("$routeChangeSuccess", function(){
-                $scope.loading = false;
-                var colorClass = ['primary', 'success', 'info', 'warning', 'danger'];
-                $scope.boxClass = 'panel-' + colorClass[Math.floor(Math.random() * 5)];
-                $scope.twoBoxClass= 'panel-' + colorClass[Math.floor(Math.random() * 5)];
-            });
-
-            $scope.getLoginInfo = function(){
-                loginService.getLoginInfo().then(function(loginInfo){
-                    $scope.loginInfo = loginInfo;
-                    $scope.isLogin = loginService.isLogin();
-                });
-            };
-
-            $scope.adminMenu = [
-                    {text: '<i class="glyphicon glyphicon-ok"></i> Menu', href: '/#/admin/menu'},
-                    /*{text: '<i class="glyphicon glyphicon-cog"></i> Setting', click: 'showEditor()'},*/
-                    {text: '<i class="glyphicon glyphicon-pencil"></i> Write board', href:'/#/admin/board'},
-                    {"divider": true},
-                    {text: '<i class="glyphicon glyphicon-log-out"></i> Logout', click: 'logout()'}
-                ];
-
-            /**
-             * 사이드 메뉴를 보일지 말지 체크한다.
-             * 사이즈가 작았을때는 메뉴가 아닌 본문을 클릭스 보이지 않게 한다.
-             */
-            $scope.windowSizeHideMenu = function(){
-                /* 윈도우 창에 따른 메뉴 보이기 안보이기 체크 */
-                if($scope.windowSize.w < 1000){
-                    $scope.hideMenu = false;
-                }
-            };
-
-            $scope.getLoginInfo();
-        }]);
-/**
- * Created by 동준 on 2014-11-17.
- */
-angular.module('johayo.controller')
-    .controller('loginController', ['$scope', 'loginService', 'ngDialog', '$alert',
-        function($scope, loginService, ngDialog, $alert){
-            loginService.logout();
-            $scope.login = {};
-            var alert = null;
-
-            $scope.doLogin = function(){
-                loginService.doLogin($scope.login).then(function(){
-                    ngDialog.close();
-                }, function(err){
-                    if(err){
-                        if(!!alert){
-                            alert.hide();
-                            alert = null;
-                        }
-                        alert =  $alert({title: err, type: 'danger', show: true, container:'#alerts-container'});
-                    }
-                });
-            };
-
-        }]);
-/**
- * Created by 동준 on 2014-11-14.
- */
-angular.module('johayo.controller')
-    .controller('mainController', ['$scope', "boardList",
-        function($scope, boardList){
-            $scope.boardList = boardList;
-
-            /* 모듈상 click이 없으면 표시가 안됨 */
-            $scope.helper = [
-                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> 박동재', click: 'helperClick()'},
-                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> 유자성', click: 'helperClick()'},
-                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> angular 스터디그룹', click: 'helperClick()'},
-                {"divider": true},
-                {text: '등등 여러 모든 분들..<i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-up"></i>', click: 'helperClick()'}
-            ];
-        }]);
-/**
- * Created by 동준 on 2014-11-14.
- */
-angular.module('johayo.controller')
-    .controller('adminMenuController', ['$rootScope', '$scope', 'menuService', 'menuList',
-        function($rootScope, $scope, menuService, menuList){
-            /* 현재 메뉴 리스트 */
-            $scope.menuList = menuList;
-            /* 메뉴 등록 */
-            $scope.menu = {
-                url : '/#/'
-            };
-
-            /* 메뉴 추가 */
-            $scope.addMenu = function(){
-                $scope.menu.url = '/#/';
-                if(!!$scope.menu.isBoard){
-                    $scope.menu.url = $scope.menu.url + 'board/';
-                }
-
-                /* 새로운 1step 메뉴 추가 */
-                if(!$scope.menu.select){
-                    $scope.menu.url = $scope.menu.url + $scope.menu.name;
-                    menuService.addOneStepMenu($scope.menu).then(function(){
-                        $scope.getMenuList();
-                    });
-                }
-                /* 2step 메뉴 추가 */
-                else{
-                    $scope.menu.url = $scope.menu.url + $scope.menu.name;
-                    $scope.menu.oneStep_id = $scope.menu.select._id;
-                    menuService.addTwoStepMenu($scope.menu).then(function(){
-                        $scope.getMenuList();
-                    });
-                }
-            };
-
-            $scope.getMenuList = function(){
-                menuService.menuList = null;
-                menuService.getMenuList().then(function(data){
-                    $scope.menuList = data;
-                });
-                $rootScope.$broadcast('getMenuList');
-            };
-        }])
-
-    .controller('sideMenuController', ['$rootScope', '$scope', 'menuService', '$location',
-        function($rootScope, $scope, menuService, $location){
-            /* 라우터가 바뀔때마다 체크 */
-            $rootScope.$on("$routeChangeSuccess", function(){
-                if(!!$scope.menuList){
-                    $scope.getActiveMenu();
-                }else{
-                    $scope.getMenuList();
-                }
-            });
-
-            $scope.getActiveMenu = function(){
-                $scope.activeMenu = '';
-                $scope.activeSubMenu = '';
-                for(var i=0;i<$scope.menuList.length;i++){
-                    if($location.path().indexOf($scope.menuList[i].url.replace('/#/', '')) > -1){
-                        $scope.activeMenu = $scope.menuList[i].name;
-                    }
-                    if($scope.menuList[i].subMenuList.length > 0){
-                        for(var j=0;j<$scope.menuList[i].subMenuList.length;j++){
-                            if($location.path().indexOf($scope.menuList[i].subMenuList[j].url.replace('/#/', '')) > -1){
-                                $scope.activeSubMenu = $scope.menuList[i].subMenuList[j].name;
-                            }
-                        }
-                    }
-                }
-            };
-
-            /* 메뉴를 클릭스 active를 옮겨준다. */
-            $scope.moveActive = function(name) {
-                $scope.activeMenu = name;
-            };
-
-            /* active 해야되는 메뉴를 바꺼준다.. */
-            $scope.isActive = function(name){
-                return {
-                    'active': $scope.checkActive(name)
-                }
-            };
-
-            /* 선택된 메뉴와 현재 메뉴를 비교해서 알려준다. */
-            $scope.checkActive = function(name){
-                return $scope.activeMenu == name;
-            };
-
-            /* step2의 메뉴를 체크하여 보여준다. */
-            $scope.isSubActive = function(name){
-                return {
-                    'active' : $scope.activeSubMenu == name
-                }
-            };
-
-            /* class를 가지고 온다. */
-            $scope.getClass = function(length){
-                return { 'sub-menu' : length > 0};
-            };
-
-            $scope.getMenuList = function(){
-                menuService.getMenuList().then(function(data){
-                    $scope.menuList = data;
-                    $scope.getActiveMenu();
-                });
-            };
-
-            /* 메뉴를 다시 가지고 온다.*/
-            $rootScope.$on('getMenuList', function(){
-                $scope.getMenuList();
-            });
-        }]);
-/**
- * Created by 동준 on 2014-12-11.
- */
-angular.module('johayo.controller')
-    .controller('msgController', ['$scope', 'msgService', '$alert',
-        function($scope, msgService,  $alert){
-            $scope.msg = {};
-            var alert = null;
-            $scope.sendMsg = function(){
-                if(!!alert){
-                    alert.hide();
-                    alert = null;
-                }
-                msgService.sendMsg($scope.msg).then(function(){
-                    alert = $alert({title: 'DongJun Kwon에게 메세지(이메일,텔레그램) 보내기 성공했습니다.', type: 'success', show: true, container:'#alerts-container'});
-                }, function(data){
-                    alert =  $alert({title: data, type: 'danger', show: true, container:'#alerts-container'});
-                });
-            };
-        }]);
-/**
  * Created by Administrator on 2014-08-11.
  */
 angular.module('errorHandler', [])
@@ -1302,3 +812,494 @@ angular.module("johayo.service")
 
         return service;
     }]);
+
+/**
+ * Created by 동준 on 2014-11-25.
+ */
+angular.module('johayo.controller')
+    .controller('boardController', ['$scope', 'boardService', 'boardList', '$location',
+        function($scope, boardService, boardList, $location){
+            /* 상세 갈때 쓴다. */
+            $scope.path = $location.path();
+            $scope.boardList = boardList;
+            $scope.activePanel = 0;
+
+            $scope.getColor = function(index){
+                return {
+                    'list-group-item-success' : index % 4 == 0,
+                    'list-group-item-warning' : index % 4 == 1,
+                    'list-group-item-info' : index % 4 == 2,
+                    'list-group-item-danger' : index % 4 == 3
+                }
+            };
+        }])
+    .controller('boardDetailController', ['$scope', 'boardService', 'boardDetail', '$location', '$routeParams',
+        function($scope, boardService, boardDetail, $location, $routeParams){
+            $scope.boardDetail = boardDetail;
+            $scope.boardConfig = [
+                {text: '<i class="glyphicon glyphicon-pencil"></i> Edit', click: 'showEditor()'},
+                {text: '<i class="glyphicon glyphicon-remove"></i> Delete', click: 'deleteBoard()'},
+            ];
+
+            $scope.boardFils = new Array();
+
+            if(boardDetail.fileList.length > 0){
+                for(var i=0;i<boardDetail.fileList.length;i++){
+                    var classNm = boardDetail.fileList[i].isImg ? '<i class="fa fa-file-image-o"></i> ' : '<i class="fa fa-file-text-o"></i> ';
+                    $scope.boardFils.push({
+                        text: classNm + boardDetail.fileList[i].name,
+                        href: '/download?path='+boardDetail.fileList[i].path +'&name='+boardDetail.fileList[i].name,
+                        target: "_self"
+                    });
+                }
+            }
+
+            $scope.deleteBoard = function(){
+                boardService.delete(boardDetail._id).then(function(){
+                    $location.path('/board/'+$routeParams.division);
+                });
+            }
+
+        }])
+    .controller('boardAddController', ['$scope', 'boardService', 'menuList', 'fileService',
+        function($scope, boardService, menuList, fileService){
+            $scope.menuList = menuList;
+
+            $scope.cleanScope = function(){
+                $scope.uploadFileList = new Array();
+                $scope.selectedFiles = new Array();
+                $scope.board = {};
+            };
+
+            $scope.addBoard = function(){
+                $scope.board.fileList = $scope.uploadFileList;
+                boardService.save($scope.board).then(function(){
+                    $scope.cleanScope();
+                    alert('ok');
+                });
+            };
+
+            $scope.onFileSelect = function($files) {
+                for ( var i = 0; i < $files.length; i++) {
+                    $scope.selectedFiles.push($files[i]);
+                    var count = $scope.selectedFiles.length*1-1 ;
+                    $scope.selectedFiles[count].isImg = $scope.selectedFiles[count].type.indexOf('image') > -1;
+                    $scope.uploadFile(count);
+                }
+            };
+
+            $scope.uploadFile = function(index){
+                $scope.selectedFiles[index].progress = 0;
+                fileService.fileUpload($scope.selectedFiles[index], 'board')
+                    .then(function(data){
+                        $scope.uploadFileList.push(data);
+                    },function(err){
+                        $scope.selectedFiles[index].progress = 0;
+                        $scope.selectedFiles[index].error = err;
+                    },function(evt){
+                        $scope.selectedFiles[index].progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    });
+            };
+
+            $scope.deleteFile = function(index, filePath){
+                fileService.deleteFile(filePath).then(function(){
+                    $scope.uploadFileList.splice(index,1);
+                    $scope.selectedFiles.splice(index,1);
+                });
+            };
+
+            $scope.cleanScope();
+        }]);
+/**
+ * Created by 동준 on 2014-12-08.
+ */
+angular.module('johayo.controller')
+    .controller('bookmarkController', ['$scope', 'bookmarkService', 'boardService', 'fileService',
+        function($scope, bookmarkService, boardService, fileService){
+            $scope.cleanBookmark = function(){
+                $scope.bookmark = {
+                    division : 'bookmark',
+                    fileList : new Array()
+                };
+            };
+            $scope.urlImgFile = {};
+            $scope.search = {};
+
+            var oldUrl = '';
+            $scope.addBookmark = function(bookmark){
+                boardService.save(bookmark).then(function(){
+                    $scope.cleanBookmark();
+                    $scope.getList();
+                });
+            };
+
+            $scope.deleteBookmark = function(seq){
+                boardService.delete(seq).then(function(){
+                    $scope.getList();
+                });
+            };
+
+            $scope.getList = function(){
+                boardService.list($scope.bookmark.division).then(function(data){
+                    $scope.bookmarkList = data;
+                });
+            };
+
+            $scope.getUrlImg = function(url){
+                if(!url || oldUrl == url){
+                    return;
+                }
+
+                oldUrl = url;
+
+                if(!!$scope.bookmark.fileList[0] && !!$scope.bookmark.fileList[0].path){
+                    fileService.deleteFile($scope.bookmark.fileList[0].path);
+                    $scope.bookmark.fileList[0] = {};
+                }
+
+                console.log(validateURL(url));
+                if(!validateURL(url) || url == 'test'){
+                    return;
+                }
+                $scope.showSpinner = true;
+
+                bookmarkService.getImg(url)
+                    .then(function(data){
+                        $scope.bookmark.fileList[0] = data;
+                        $scope.showSpinner = false;
+                    });
+            };
+
+            $scope.cleanBookmark();
+            $scope.getList();
+
+            function validateURL(textval) {
+                var urlregex = new RegExp(
+                    "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
+                return urlregex.test(textval);
+            }
+        }]);
+/**
+ * Created by 동준 on 2014-11-27.
+ */
+angular.module('johayo.controller')
+    .controller('commentController', ['$scope', 'commentService',
+        function($scope, commentService){
+            /* 댓글 달때 씀 */
+            $scope.comment = {};
+            /* 댓글 수정시 글을 안보이고 editor를 보이게 할지 설정 */
+            $scope.isShowEditor = {};
+
+            /* 댓글 등록 */
+            $scope.addComment = function(){
+                commentService.addComment($scope.boardDetail._id, $scope.comment.content, $scope.comment.name, $scope.comment.pw)
+                    .then(function(data){
+                        $scope.boardDetail = data;
+                        $scope.comment = {};
+                    });
+            };
+
+            /* 댓글 수정 */
+            $scope.editComment = function(commentDetail){
+                commentService.editComment($scope.boardDetail._id, commentDetail.seq, commentDetail.content, commentDetail.pw)
+                    .then(function(data){
+                        console.log(data);
+                        $scope.closeEditor();
+                        $scope.boardDetail = data;
+                        $scope.showWriteBox = false;
+                    });
+            };
+
+            /* 댓글 삭제 */
+            $scope.deleteComment = function(commentSeq, pw){
+                commentService.deleteComment($scope.boardDetail._id, commentSeq, pw)
+                    .then(function(data){
+                        console.log(data);
+                        $scope.boardDetail = data;
+                    });
+            };
+
+            /* 유효성 체크 */
+            $scope.checkVal = function(val){
+                var checkContent = true;
+                if(!!val.content){
+                    checkContent = val.content.replace(/(<([^>]+)>)/ig,"") == ''
+                }
+                return checkContent || (!$scope.isLogin && (!val.name || !val.pw));
+            };
+
+            /* 댓글 수정시 다른 곳의 댓글들의 editor 연것을 안보이게 하고 해당 부분을 보이게 한다. */
+            $scope.showEditor = function(seq, subSeq){
+                $scope.showWriteBox = true;
+                if(!!subSeq){
+                    if(!$scope.isShowSubEditor[seq+'-'+subSeq]){
+                        $scope.closeEditor();
+                        $scope.isShowSubEditor[seq+'-'+subSeq] = true;
+                    }else{
+                        $scope.closeEditor();
+                    }
+                }else{
+                    if(!$scope.isShowEditor[seq]){
+                        $scope.closeEditor();
+                        $scope.isShowEditor[seq] = true;
+                    }else{
+                        $scope.closeEditor();
+                    }
+                }
+            };
+
+            /* 댓글 다 닫기 */
+            $scope.closeEditor = function(){
+                if(!!$scope.boardDetail.commentList){
+                    for(var i=0;i<$scope.boardDetail.commentList.length;i++){
+                        $scope.isShowEditor[$scope.boardDetail.commentList[i].seq] = false;
+                    }
+                }
+            };
+        }]);
+/**
+ * Created by 동준 on 2014-11-14.
+ */
+angular.module('johayo.controller')
+    .controller('indexController', ['$rootScope', '$scope', 'loginService', 'errorService', 'msgService',
+        function($rootScope, $scope, loginService, errorService, msgService){
+            /* 윈도우 창의 크기를 체크 */
+            $scope.windowSize = {};
+
+            $scope.openLogin = function(){
+                loginService.openLogin();
+            };
+
+            $scope.openMsg = function(){
+                msgService.openMsg();
+            };
+
+            $scope.logout = function(){
+                loginService.logout();
+            };
+
+            /**
+             * 로그인 한후 정보를 다시 가지고 온다.
+             */
+            $rootScope.$on('getLoginInfo', function(){
+                $scope.getLoginInfo();
+            });
+
+            $rootScope.$on("$routeChangeStart", function(){
+                $scope.loading = true;
+                /* 윈도우 창에 따른 메뉴 보이기 안보이기 체크 */
+                $scope.windowSizeHideMenu();
+            });
+
+            $rootScope.$on("$routeChangeSuccess", function(){
+                $scope.loading = false;
+                var colorClass = ['primary', 'success', 'info', 'warning', 'danger'];
+                $scope.boxClass = 'panel-' + colorClass[Math.floor(Math.random() * 5)];
+                $scope.twoBoxClass= 'panel-' + colorClass[Math.floor(Math.random() * 5)];
+            });
+
+            $scope.getLoginInfo = function(){
+                loginService.getLoginInfo().then(function(loginInfo){
+                    $scope.loginInfo = loginInfo;
+                    $scope.isLogin = loginService.isLogin();
+                });
+            };
+
+            $scope.adminMenu = [
+                    {text: '<i class="glyphicon glyphicon-ok"></i> Menu', href: '/#/admin/menu'},
+                    /*{text: '<i class="glyphicon glyphicon-cog"></i> Setting', click: 'showEditor()'},*/
+                    {text: '<i class="glyphicon glyphicon-pencil"></i> Write board', href:'/#/admin/board'},
+                    {"divider": true},
+                    {text: '<i class="glyphicon glyphicon-log-out"></i> Logout', click: 'logout()'}
+                ];
+
+            /**
+             * 사이드 메뉴를 보일지 말지 체크한다.
+             * 사이즈가 작았을때는 메뉴가 아닌 본문을 클릭스 보이지 않게 한다.
+             */
+            $scope.windowSizeHideMenu = function(){
+                /* 윈도우 창에 따른 메뉴 보이기 안보이기 체크 */
+                if($scope.windowSize.w < 1000){
+                    $scope.hideMenu = false;
+                }
+            };
+
+            $scope.getLoginInfo();
+        }]);
+/**
+ * Created by 동준 on 2014-11-17.
+ */
+angular.module('johayo.controller')
+    .controller('loginController', ['$scope', 'loginService', 'ngDialog', '$alert',
+        function($scope, loginService, ngDialog, $alert){
+            loginService.logout();
+            $scope.login = {};
+            var alert = null;
+
+            $scope.doLogin = function(){
+                loginService.doLogin($scope.login).then(function(){
+                    ngDialog.close();
+                }, function(err){
+                    if(err){
+                        if(!!alert){
+                            alert.hide();
+                            alert = null;
+                        }
+                        alert =  $alert({title: err, type: 'danger', show: true, container:'#alerts-container'});
+                    }
+                });
+            };
+
+        }]);
+/**
+ * Created by 동준 on 2014-11-14.
+ */
+angular.module('johayo.controller')
+    .controller('mainController', ['$scope', "boardList",
+        function($scope, boardList){
+            $scope.boardList = boardList;
+
+            /* 모듈상 click이 없으면 표시가 안됨 */
+            $scope.helper = [
+                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> 박동재', click: 'helperClick()'},
+                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> 유자성', click: 'helperClick()'},
+                {text: '<i class="glyphicon glyphicon-thumbs-up"></i> angular 스터디그룹', click: 'helperClick()'},
+                {"divider": true},
+                {text: '등등 여러 모든 분들..<i class="glyphicon glyphicon-thumbs-up"></i><i class="glyphicon glyphicon-thumbs-up"></i>', click: 'helperClick()'}
+            ];
+        }]);
+/**
+ * Created by 동준 on 2014-11-14.
+ */
+angular.module('johayo.controller')
+    .controller('adminMenuController', ['$rootScope', '$scope', 'menuService', 'menuList',
+        function($rootScope, $scope, menuService, menuList){
+            /* 현재 메뉴 리스트 */
+            $scope.menuList = menuList;
+            /* 메뉴 등록 */
+            $scope.menu = {
+                url : '/#/'
+            };
+
+            /* 메뉴 추가 */
+            $scope.addMenu = function(){
+                $scope.menu.url = '/#/';
+                if(!!$scope.menu.isBoard){
+                    $scope.menu.url = $scope.menu.url + 'board/';
+                }
+
+                /* 새로운 1step 메뉴 추가 */
+                if(!$scope.menu.select){
+                    $scope.menu.url = $scope.menu.url + $scope.menu.name;
+                    menuService.addOneStepMenu($scope.menu).then(function(){
+                        $scope.getMenuList();
+                    });
+                }
+                /* 2step 메뉴 추가 */
+                else{
+                    $scope.menu.url = $scope.menu.url + $scope.menu.name;
+                    $scope.menu.oneStep_id = $scope.menu.select._id;
+                    menuService.addTwoStepMenu($scope.menu).then(function(){
+                        $scope.getMenuList();
+                    });
+                }
+            };
+
+            $scope.getMenuList = function(){
+                menuService.menuList = null;
+                menuService.getMenuList().then(function(data){
+                    $scope.menuList = data;
+                });
+                $rootScope.$broadcast('getMenuList');
+            };
+        }])
+
+    .controller('sideMenuController', ['$rootScope', '$scope', 'menuService', '$location',
+        function($rootScope, $scope, menuService, $location){
+            /* 라우터가 바뀔때마다 체크 */
+            $rootScope.$on("$routeChangeSuccess", function(){
+                if(!!$scope.menuList){
+                    $scope.getActiveMenu();
+                }else{
+                    $scope.getMenuList();
+                }
+            });
+
+            $scope.getActiveMenu = function(){
+                $scope.activeMenu = '';
+                $scope.activeSubMenu = '';
+                for(var i=0;i<$scope.menuList.length;i++){
+                    if($location.path().indexOf($scope.menuList[i].url.replace('/#/', '')) > -1){
+                        $scope.activeMenu = $scope.menuList[i].name;
+                    }
+                    if($scope.menuList[i].subMenuList.length > 0){
+                        for(var j=0;j<$scope.menuList[i].subMenuList.length;j++){
+                            if($location.path().indexOf($scope.menuList[i].subMenuList[j].url.replace('/#/', '')) > -1){
+                                $scope.activeSubMenu = $scope.menuList[i].subMenuList[j].name;
+                            }
+                        }
+                    }
+                }
+            };
+
+            /* 메뉴를 클릭스 active를 옮겨준다. */
+            $scope.moveActive = function(name) {
+                $scope.activeMenu = name;
+            };
+
+            /* active 해야되는 메뉴를 바꺼준다.. */
+            $scope.isActive = function(name){
+                return {
+                    'active': $scope.checkActive(name)
+                }
+            };
+
+            /* 선택된 메뉴와 현재 메뉴를 비교해서 알려준다. */
+            $scope.checkActive = function(name){
+                return $scope.activeMenu == name;
+            };
+
+            /* step2의 메뉴를 체크하여 보여준다. */
+            $scope.isSubActive = function(name){
+                return {
+                    'active' : $scope.activeSubMenu == name
+                }
+            };
+
+            /* class를 가지고 온다. */
+            $scope.getClass = function(length){
+                return { 'sub-menu' : length > 0};
+            };
+
+            $scope.getMenuList = function(){
+                menuService.getMenuList().then(function(data){
+                    $scope.menuList = data;
+                    $scope.getActiveMenu();
+                });
+            };
+
+            /* 메뉴를 다시 가지고 온다.*/
+            $rootScope.$on('getMenuList', function(){
+                $scope.getMenuList();
+            });
+        }]);
+/**
+ * Created by 동준 on 2014-12-11.
+ */
+angular.module('johayo.controller')
+    .controller('msgController', ['$scope', 'msgService', '$alert',
+        function($scope, msgService,  $alert){
+            $scope.msg = {};
+            var alert = null;
+            $scope.sendMsg = function(){
+                if(!!alert){
+                    alert.hide();
+                    alert = null;
+                }
+                msgService.sendMsg($scope.msg).then(function(){
+                    alert = $alert({title: 'DongJun Kwon에게 메세지(이메일,텔레그램) 보내기 성공했습니다.', type: 'success', show: true, container:'#alerts-container'});
+                }, function(data){
+                    alert =  $alert({title: data, type: 'danger', show: true, container:'#alerts-container'});
+                });
+            };
+        }]);
