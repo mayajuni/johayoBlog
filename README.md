@@ -1,5 +1,5 @@
 #Johayo Blog
-### <a href='http://johayo.com' target='_black'>Go to Blog</a>
+현재 meteor를 이용한 블로그로 리펙토링 진행중 입니다.
 
 ## 설명
  저의 blog는 기본 angular를 통해서 만들었으면 서버단은 nodejs로 되어 있습니다. 그리고 redis는 세션데이터 저장소로 사용되며 mongoDB가 base입니다.
